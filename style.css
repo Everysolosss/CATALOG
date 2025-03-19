@@ -1,0 +1,245 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background video */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.5); /* Overlay to make text readable */
+}
+
+#background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+h1 {
+  color: white;
+  margin-bottom: 40px;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 1s ease-out;
+}
+
+h2 {
+  color: white;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 1s ease-out;
+}
+
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.file-input-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-input-button {
+  padding: 12px 25px;
+  background-color: #6200ea;
+  color: white;
+  border: 2px solid #ffffff; /* Added border */
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.file-input-button:hover {
+  background-color: #3700b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+  
+  .button {
+  padding: 12px 25px;
+  background-color: black;
+  color: white;
+  border: 2px solid #ffffff; /* Added border */
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+}
+
+#splitButton {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background-color: #d32f2f; /* Darker color for Split Image button */
+  color: white;
+  border: 2px solid #ffffff; /* Added border */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+#splitButton:hover {
+  background-color: #b71c1c; /* Darker hover color */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+#splitButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#splitButton::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+#splitButton:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+#preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 15px;
+}
+
+.image-part {
+  width: 150px;
+  height: auto;
+  border: 2px solid #ffffff; /* Added border */
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.8) rotate(-5deg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.image-part.show {
+  animation: fadeInScaleRotate 0.5s forwards;
+}
+
+@keyframes fadeInScaleRotate {
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.image-part:hover {
+  transform: scale(1.05) rotate(0deg);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#download-links {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+#download-links a {
+  padding: 10px 20px;
+  background-color: #6200ea;
+  color: white;
+  text-decoration: none;
+  border: 2px solid #ffffff; /* Added border */
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+#download-links a.show {
+  animation: fadeInUp 0.5s forwards;
+}
+
+#download-links a:hover {
+  background-color: #3700b3;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#filename {
+  margin-top: 15px;
+  font-style: italic;
+  color: white;
+  font-size: 14px;
+}
