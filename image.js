@@ -1,4 +1,3 @@
-let currentVisibleButton = null;
 const imageUrls = [
     'https://i.ibb.co/pV3PXCj/9473.jpg',
     'https://i.ibb.co/pBxTJfQH/4673.jpg',
@@ -17,7 +16,6 @@ const imageUrls = [
     'https://i.ibb.co/vCcS9vkJ/5687.jpg',
     'https://i.ibb.co/994GH7JJ/7275.jpg',
     'https://i.ibb.co/jPkpVY6F/3665.jpg',
-    'https://i.ibb.co/nsxhkNDz/9663.jpg',
     'https://i.ibb.co/Ndvq6dDN/4862.jpg',
     'https://i.ibb.co/Kj65B76N/8817.jpg',
     'https://i.ibb.co/ZpRs6k57/8414.jpg',
@@ -32,26 +30,31 @@ const imageUrls = [
     'https://i.ibb.co/H6v6vMc/1683.jpg',
     'https://i.ibb.co/whMZJJSJ/7022.jpg',
     'https://i.ibb.co/Rpf7kSkZ/4401.jpg',
-    'https://i.ibb.co/37xmBf7Wk/2112.jpg',
     'https://i.ibb.co/spsQ1DK0/275.jpg'
 ];
 
+document.addEventListener('DOMContentLoaded', () => {
+    generateImageCards();
+    setupEventListeners();
+});
+
 function generateImageCards() {
     const gallery = document.querySelector('.gallery');
+    gallery.innerHTML = ''; // Clear existing content
     
     imageUrls.forEach((imageUrl, index) => {
         const imageCard = document.createElement('div');
-        imageCard.classList.add('image-card');
+        imageCard.className = 'image-card';
         
         const img = document.createElement('img');
         img.src = imageUrl;
-        img.alt = 'Image ' + (index + 1);
-        img.classList.add('downloadable-image');
+        img.alt = `Image ${index + 1}`;
+        img.loading = "lazy";
         
         const button = document.createElement('button');
-        button.classList.add('download-btn');
-        button.setAttribute('data-image', imageUrl);
+        button.className = 'download-btn';
         button.textContent = 'Download';
+        button.setAttribute('data-image', imageUrl);
         
         imageCard.appendChild(img);
         imageCard.appendChild(button);
@@ -59,55 +62,49 @@ function generateImageCards() {
     });
 }
 
-generateImageCards();
-
-document.querySelectorAll('.downloadable-image').forEach(image => {
-    image.addEventListener('mouseover', function() {
-        const button = this.nextElementSibling;
-        
-        if (currentVisibleButton && currentVisibleButton !== button) {
-            currentVisibleButton.style.display = 'none';
-            setTimeout(() => {
-                currentVisibleButton.style.opacity = '0';
-            }, 200);
-        }
-        
-        if (button.style.display === 'none') {
-            button.style.display = 'block';
-            setTimeout(() => {
-                button.style.opacity = '1';
-            }, 200);
-            currentVisibleButton = null;
-        } else {
-            button.style.display = 'block';
-            setTimeout(() => {
-                button.style.opacity = '1';
-            }, 10);
-            currentVisibleButton = button;
-        }
+function setupEventListeners() {
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const imageUrl = button.getAttribute('data-image');
+            await downloadImage(imageUrl);
+        });
     });
-});
-
-document.querySelectorAll('.download-btn').forEach(button => {
-    button.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const imageUrl = this.getAttribute('data-image');
-        const fileName = 'Niroshan_Image_' + Date.now() + '.jpg';
-        
-        if (!imageUrl) {
-            console.error('Image URL is missing.');
-            return;
-        }
-        
-        downloadImage(imageUrl, fileName);
-    });
-});
-
-function downloadImage(imageUrl, fileName) {
-    const a = document.createElement('a');
-    a.href = imageUrl;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
 }
+
+async function downloadImage(imageUrl) {
+    try {
+        const response = await fetch(imageUrl, {
+            mode: 'cors',
+            headers: new Headers({
+                'Origin': window.location.origin
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const fileName = `Niroshan_Image_${Date.now()}.jpg`;
+        
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        
+    } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback: Open in new tab if download fails
+        window.open(imageUrl, '_blank');
+    }
+                      }
