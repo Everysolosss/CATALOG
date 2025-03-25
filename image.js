@@ -1,89 +1,113 @@
-let currentVisibleButton = null; // Track the currently visible button
+let currentVisibleButton = null;
+const imageUrls = [
+    'https://i.ibb.co/pV3PXCj/9473.jpg',
+    'https://i.ibb.co/pBxTJfQH/4673.jpg',
+    'https://i.ibb.co/yc2xJh4f/3429.jpg',
+    'https://i.ibb.co/qLwrpr5v/472.jpg',
+    'https://i.ibb.co/VPq4sK5/1991.jpg',
+    'https://i.ibb.co/WWzndPpf/2344.jpg',
+    'https://i.ibb.co/hJBPmwD4/2311.jpg',
+    'https://i.ibb.co/1JRt3ywT/5005.jpg',
+    'https://i.ibb.co/76RgRzd/2401.jpg',
+    'https://i.ibb.co/chwg8Y6M/3997.jpg',
+    'https://i.ibb.co/HDFLqSjk/3801.jpg',
+    'https://i.ibb.co/KcbhP68V/5780.jpg',
+    'https://i.ibb.co/CKn1nRXH/5274.jpg',
+    'https://i.ibb.co/7t336d43/2991.jpg',
+    'https://i.ibb.co/vCcS9vkJ/5687.jpg',
+    'https://i.ibb.co/994GH7JJ/7275.jpg',
+    'https://i.ibb.co/jPkpVY6F/3665.jpg',
+    'https://i.ibb.co/nsxhkNDz/9663.jpg',
+    'https://i.ibb.co/Ndvq6dDN/4862.jpg',
+    'https://i.ibb.co/Kj65B76N/8817.jpg',
+    'https://i.ibb.co/ZpRs6k57/8414.jpg',
+    'https://i.ibb.co/gLdVQpVr/8578.jpg',
+    'https://i.ibb.co/rhGtCj9/6401.jpg',
+    'https://i.ibb.co/Q3wH9qGb/750.jpg',
+    'https://i.ibb.co/svPkTLYW/5055.jpg',
+    'https://i.ibb.co/SDfcZdnX/6328.jpg',
+    'https://i.ibb.co/LVQZD9v/2929.jpg',
+    'https://i.ibb.co/nMVnwV2p/2157.jpg',
+    'https://i.ibb.co/7xmBf7Wk/2112.jpg',
+    'https://i.ibb.co/H6v6vMc/1683.jpg',
+    'https://i.ibb.co/whMZJJSJ/7022.jpg',
+    'https://i.ibb.co/Rpf7kSkZ/4401.jpg',
+    'https://i.ibb.co/37xmBf7Wk/2112.jpg',
+    'https://i.ibb.co/spsQ1DK0/275.jpg'
+];
 
-// Function to generate image cards dynamically
 function generateImageCards() {
-  const gallery = document.querySelector('.gallery');
-
-  for (let i = 1; i <= 40; i++) {
-    const imageCard = document.createElement('div');
-    imageCard.classList.add('image-card');
-
-    const image = document.createElement('img');
-    image.src = `images/image${i}.jpg`; // Updated path
-    image.alt = `Image ${i}`;
-    image.classList.add('downloadable-image');
-
-    const downloadButton = document.createElement('button');
-    downloadButton.classList.add('download-btn');
-    downloadButton.setAttribute('data-image', `images/image${i}.jpg`); // Updated path
-    downloadButton.textContent = 'Download';
-
-    // Append image and button to the card
-    imageCard.appendChild(image);
-    imageCard.appendChild(downloadButton);
-
-    // Append the card to the gallery
-    gallery.appendChild(imageCard);
-  }
+    const gallery = document.querySelector('.gallery');
+    
+    imageUrls.forEach((imageUrl, index) => {
+        const imageCard = document.createElement('div');
+        imageCard.classList.add('image-card');
+        
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = 'Image ' + (index + 1);
+        img.classList.add('downloadable-image');
+        
+        const button = document.createElement('button');
+        button.classList.add('download-btn');
+        button.setAttribute('data-image', imageUrl);
+        button.textContent = 'Download';
+        
+        imageCard.appendChild(img);
+        imageCard.appendChild(button);
+        gallery.appendChild(imageCard);
+    });
 }
 
-// Call the function to generate image cards
 generateImageCards();
 
-// Add click event to all images
 document.querySelectorAll('.downloadable-image').forEach(image => {
-  image.addEventListener('click', function () {
-    const downloadButton = this.nextElementSibling;
-
-    // Hide the previously visible button (if any)
-    if (currentVisibleButton && currentVisibleButton !== downloadButton) {
-      currentVisibleButton.classList.remove('visible');
-      setTimeout(() => {
-        currentVisibleButton.style.display = 'none';
-      }, 500); // Match the duration of the fade-out animation
-    }
-
-    // Toggle the current button
-    if (downloadButton.classList.contains('visible')) {
-      downloadButton.classList.remove('visible');
-      setTimeout(() => {
-        downloadButton.style.display = 'none';
-      }, 500);
-      currentVisibleButton = null; // No button is visible now
-    } else {
-      downloadButton.style.display = 'block';
-      setTimeout(() => {
-        downloadButton.classList.add('visible');
-      }, 10); // Small delay to allow display: block to take effect
-      currentVisibleButton = downloadButton; // Update the currently visible button
-    }
-  });
+    image.addEventListener('mouseover', function() {
+        const button = this.nextElementSibling;
+        
+        if (currentVisibleButton && currentVisibleButton !== button) {
+            currentVisibleButton.style.display = 'none';
+            setTimeout(() => {
+                currentVisibleButton.style.opacity = '0';
+            }, 200);
+        }
+        
+        if (button.style.display === 'none') {
+            button.style.display = 'block';
+            setTimeout(() => {
+                button.style.opacity = '1';
+            }, 200);
+            currentVisibleButton = null;
+        } else {
+            button.style.display = 'block';
+            setTimeout(() => {
+                button.style.opacity = '1';
+            }, 10);
+            currentVisibleButton = button;
+        }
+    });
 });
 
-// Add click event to all download buttons
 document.querySelectorAll('.download-btn').forEach(button => {
-  button.addEventListener('click', function (event) {
-    event.stopPropagation();
-    const imageUrl = this.getAttribute('data-image');
-    const customName = "Niroshan_Image.jpg"; // Set your custom name here
-
-    // Check if the image URL is valid
-    if (!imageUrl) {
-      console.error("Image URL is missing.");
-      return;
-    }
-
-    // Download the image
-    downloadImage(imageUrl, customName);
-  });
+    button.addEventListener('click', function(event) {
+        event.stopPropagation();
+        const imageUrl = this.getAttribute('data-image');
+        const fileName = 'Niroshan_Image_' + Date.now() + '.jpg';
+        
+        if (!imageUrl) {
+            console.error('Image URL is missing.');
+            return;
+        }
+        
+        downloadImage(imageUrl, fileName);
+    });
 });
 
-// Function to download the image
-function downloadImage(imageUrl, customName) {
-  const link = document.createElement('a');
-  link.href = imageUrl;
-  link.download = customName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+function downloadImage(imageUrl, fileName) {
+    const a = document.createElement('a');
+    a.href = imageUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
